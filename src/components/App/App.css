@@ -1,0 +1,157 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.app {
+  background: #f7f7f7;
+  height: 100%;
+}
+
+.wrapper {
+  max-width: 1010px;
+  margin: 0 auto;
+}
+
+.app__wrapper {
+  background: #ffffff;
+}
+
+.ant-row {
+  padding: 19px 32px;
+}
+
+.card {
+  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
+  background: #ffffff;
+  height: 245px;
+  width: 100%;
+}
+
+.card__inner {
+  display: grid;
+  grid-template-columns: 60px auto;
+  grid-template-rows: 1fr 2fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 7px;
+  padding: 6px 10px 20px;
+}
+
+.card__text {
+  font-size: 12px;
+  line-height: 22px;
+  color: #000000;
+  margin: 0;
+}
+
+.card__date {
+  font-size: 12px;
+  line-height: 22px;
+  color: #827e7e;
+  margin: 0;
+}
+
+.card__title {
+  font-size: 20px;
+  line-height: 28px;
+  color: #000000;
+  margin-bottom: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__img {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+
+.card__img img {
+  width: 100%;
+  height: auto;
+}
+
+.card__header {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+  overflow: hidden;
+}
+
+.card__body {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card__list {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.card__list .list__item {
+  font-size: 12px;
+  line-height: 15px;
+  color: rgba(0, 0, 0, 0.65);
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  padding: 2px 5px;
+  margin-right: 8px;
+}
+
+.card__list .list__item:last-child {
+  margin-right: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .card {
+    height: 275px;
+  }
+
+  .card__inner {
+    grid-template-columns: 183px auto;
+    padding: 0;
+  }
+  .card__body {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    padding-right: 20px;
+  }
+
+  .card__header {
+    padding: 12px 6px 0 0;
+  }
+
+  .card__img {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+  }
+}
