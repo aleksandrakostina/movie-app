@@ -20,9 +20,14 @@ body {
   height: 100%;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 .app {
   background: #f7f7f7;
-  height: 100%;
+  height: auto;
 }
 
 .wrapper {
@@ -32,11 +37,12 @@ body {
 
 .app__wrapper {
   background: #ffffff;
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
 }
 
-.movies {
-  position: relative;
+.ant-alert {
+  margin: 20px 16px 0;
 }
 
 .ant-spin-spinning {
@@ -45,10 +51,24 @@ body {
   width: 100%;
 }
 
+.ant-spin-container {
+  overflow: hidden;
+}
+
 .ant-row {
-  padding: 19px 32px;
+  padding: 10px 16px;
 }
 
 .ant-list-empty-text {
   display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .ant-row {
+    padding: 34px 32px;
+  }
+
+  .ant-alert {
+    margin: 20px 32px 0;
+  }
 }
