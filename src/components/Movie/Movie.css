@@ -8,7 +8,6 @@
 .card__inner {
   display: grid;
   grid-template-columns: 60px auto;
-  grid-template-rows: 1fr 2fr;
   grid-column-gap: 20px;
   grid-row-gap: 7px;
   padding: 6px 10px 20px;
@@ -32,10 +31,10 @@
   font-size: 20px;
   line-height: 28px;
   color: #000000;
-  margin-bottom: 7px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
 }
 
 .card__img {
@@ -74,6 +73,8 @@
 .card__list {
   display: flex;
   margin-bottom: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .card__list .list__item {
@@ -85,14 +86,45 @@
   border-radius: 2px;
   padding: 2px 5px;
   margin-right: 8px;
+  margin-bottom: 4px;
 }
 
 .card__list .list__item:last-child {
   margin-right: 0;
 }
 
-.ant-list-pagination {
+.card__top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.card__rated {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 3px;
+  font-size: 12px;
+  line-height: 22px;
+  color: #000000;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.card__rated--bad {
+  border: 2px solid #e90000;
+}
+
+.card__rated--normal {
+  border: 2px solid#e97e00;
+}
+
+.card__rated--best {
+  border: 2px solid#E9D100;
+}
+
+.card__rated--top {
+  border: 2px solid#66E900;
 }
 
 @media screen and (min-width: 768px) {

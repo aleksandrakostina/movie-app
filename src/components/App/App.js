@@ -1,86 +1,99 @@
 import React, { Component } from 'react';
 import 'antd/dist/antd.min.css';
 import './App.css';
-import { Alert, Spin } from 'antd';
-import debounce from 'lodash.debounce';
+import { Result, Tabs } from 'antd';
 import api from '../../services/apiService';
-import Movies from '../Movies';
-import SearchForm from '../SearchForm';
+import SearchMoviesTab from '../SearchMoviesTab/SearchMoviesTab';
+import { GenresProvider } from '../GenresContext';
+import RatedMoviesTab from '../RatedMoviesTab/RatedMoviesTab';
 
 class App extends Component {
-  constructor() {
-    super();
-    this.getMoviesDebounced = debounce(this.getMovies, 500);
-  }
-
   state = {
-    movies: [],
-    totalResults: 0,
-    loading: false,
+    guestSessionId: '',
+    genres: [],
+    ratedMovies: [],
     error: false,
     errorMessage: '',
-    searchValue: '',
-    currentPage: 1,
   };
 
-  componentWillUnmount() {
-    this.getMoviesDebounced.cancel();
+  componentDidMount() {
+    const localSession = localStorage.getItem('session');
+
+    if (!localSession) {
+      api
+        .getGuestSession()
+        .then(({ guest_session_id: guestSessionId }) => {
+          this.setState({ guestSessionId });
+          localStorage.setItem('session', guestSessionId);
+        })
+        .catch(this.onError);
+    } else {
+      this.setState({ guestSessionId: localSession });
+    }
+
+    api
+      .getGenres()
+      .then(({ genres }) => this.setState({ genres }))
+      .catch(this.onError);
   }
 
-  getMovies = (query, page) => {
-    if (query.length) {
-      this.setState({ loading: true });
-      api.getMovies(query, page).then(this.onMoviesLoaded).catch(this.onError);
-    } else {
-      this.setState({ movies: [], error: false, errorMessage: '' });
+  componentDidUpdate(prevProps, prevState) {
+    const { guestSessionId } = this.state;
+
+    if (prevState.guestSessionId !== guestSessionId) {
+      this.getRatedMovies(guestSessionId);
     }
+  }
+
+  onError = (err) => {
+    this.setState({ error: true, errorMessage: err.message });
   };
 
-  onMoviesLoaded = (movies) => {
-    this.setState({ movies: movies.results, totalResults: movies.total_results, loading: false, currentPage: 1 });
-
-    if (movies.results.length) {
-      this.setState({ error: false, errorMessage: '' });
-    } else {
-      this.setState({ error: true, errorMessage: 'По вашему запросу ничего не найдено' });
-    }
+  getRatedMovies = (guestSessionId) => {
+    api
+      .getRatedMovies(guestSessionId)
+      .then(({ results }) => this.setState({ ratedMovies: results }))
+      .catch(this.onError);
   };
 
-  onError = () => {
-    this.setState({ loading: false, error: true, errorMessage: 'Что-то пошло не так, проверьте подключение к сети' });
-  };
+  changeRate = (rate, movie) => {
+    const { guestSessionId } = this.state;
 
-  onChangePage = (page) => {
-    const { searchValue } = this.state;
-    this.setState({ currentPage: page });
-    this.getMovies(searchValue, page);
-  };
-
-  onChangeValue = (searchValue) => {
-    this.setState({ searchValue });
-    this.getMoviesDebounced(searchValue);
+    api.sendRatedMovie(movie.id, rate, guestSessionId).catch(this.onError);
+    this.setState(({ ratedMovies }) => {
+      if (ratedMovies.find((ratedMovie) => ratedMovie.id === movie.id)) {
+        return {
+          ratedMovies: ratedMovies.map((ratedMovie) =>
+            ratedMovie.id === movie.id ? { ...ratedMovie, rating: rate } : ratedMovie
+          ),
+        };
+      }
+      return {
+        ratedMovies: [...ratedMovies, { ...movie, rating: rate }],
+      };
+    });
   };
 
   render() {
-    const { movies, loading, error, totalResults, searchValue, currentPage, errorMessage } = this.state;
-    const hasMovies = !(loading || error) && movies.length > 0;
+    const { genres, ratedMovies, error, errorMessage } = this.state;
 
     return (
       <div className="app">
         <div className="wrapper app__wrapper">
-          <SearchForm getMovies={this.getMovies} onChangeValue={this.onChangeValue} value={searchValue} />
-          <div className="movies">
-            {loading && <Spin size="large" />}
-            {error && <Alert message={errorMessage} type="warning" showIcon />}
-            {hasMovies && (
-              <Movies
-                movies={movies}
-                currentPage={currentPage}
-                onChangePage={this.onChangePage}
-                totalResults={totalResults}
-              />
-            )}
-          </div>
+          {error ? (
+            <Result title={errorMessage} status="warning" />
+          ) : (
+            <GenresProvider value={genres}>
+              <Tabs defaultActiveKey="search" centered>
+                <Tabs.TabPane tab="Search" key="search">
+                  <SearchMoviesTab changeRate={this.changeRate} ratedMovies={ratedMovies} />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Rated" key="rated">
+                  <RatedMoviesTab changeRate={this.changeRate} movies={ratedMovies} />
+                </Tabs.TabPane>
+              </Tabs>
+            </GenresProvider>
+          )}
         </div>
       </div>
     );

@@ -47,7 +47,7 @@ body {
 
 .ant-spin-spinning {
   position: absolute;
-  top: 100px;
+  top: 10px;
   width: 100%;
 }
 
@@ -61,6 +61,18 @@ body {
 
 .ant-list-empty-text {
   display: none;
+}
+
+.ant-rate-star:not(:last-child) {
+  margin-right: 3px;
+}
+
+.ant-tabs-content-holder {
+  padding-bottom: 50px;
+}
+
+.ant-list-pagination {
+  text-align: center;
 }
 
 @media screen and (min-width: 768px) {
