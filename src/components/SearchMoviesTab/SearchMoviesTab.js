@@ -2,16 +2,13 @@ import React, { Component } from 'react';
 import { Alert, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import debounce from 'lodash.debounce';
-import api from '../../services/apiService';
+import MovieServices from '../../services/MovieServices';
 import Movies from '../Movies';
 import SearchForm from '../SearchForm';
 
-class SearchMoviesTab extends Component {
-  constructor() {
-    super();
-    this.getMoviesDebounced = debounce(this.getMovies, 500);
-  }
+const movieServices = new MovieServices();
 
+class SearchMoviesTab extends Component {
   state = {
     movies: [],
     totalResults: 0,
@@ -22,6 +19,11 @@ class SearchMoviesTab extends Component {
     searchValue: '',
   };
 
+  constructor() {
+    super();
+    this.getMoviesDebounced = debounce(this.getMovies, 500);
+  }
+
   componentWillUnmount() {
     this.getMoviesDebounced.cancel();
   }
@@ -29,7 +31,7 @@ class SearchMoviesTab extends Component {
   getMovies = (query, page) => {
     if (query.length) {
       this.setState({ loading: true });
-      api.getMovies(query, page).then(this.onMoviesLoaded).catch(this.onError);
+      movieServices.getMovies(query, page).then(this.onMoviesLoaded).catch(this.onError);
     } else {
       this.setState({ movies: [], error: false, errorMessage: '' });
     }

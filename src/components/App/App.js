@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import 'antd/dist/antd.min.css';
 import './App.css';
 import { Result, Tabs } from 'antd';
-import api from '../../services/apiService';
 import SearchMoviesTab from '../SearchMoviesTab/SearchMoviesTab';
 import { GenresProvider } from '../GenresContext';
 import RatedMoviesTab from '../RatedMoviesTab/RatedMoviesTab';
+import MovieServices from '../../services/MovieServices';
+
+const movieServices = new MovieServices();
 
 class App extends Component {
   state = {
@@ -20,7 +22,7 @@ class App extends Component {
     const localSession = localStorage.getItem('session');
 
     if (!localSession) {
-      api
+      movieServices
         .getGuestSession()
         .then(({ guest_session_id: guestSessionId }) => {
           this.setState({ guestSessionId });
@@ -31,7 +33,7 @@ class App extends Component {
       this.setState({ guestSessionId: localSession });
     }
 
-    api
+    movieServices
       .getGenres()
       .then(({ genres }) => this.setState({ genres }))
       .catch(this.onError);
@@ -50,7 +52,7 @@ class App extends Component {
   };
 
   getRatedMovies = (guestSessionId) => {
-    api
+    movieServices
       .getRatedMovies(guestSessionId)
       .then(({ results }) => this.setState({ ratedMovies: results }))
       .catch(this.onError);
@@ -59,7 +61,7 @@ class App extends Component {
   changeRate = (rate, movie) => {
     const { guestSessionId } = this.state;
 
-    api.sendRatedMovie(movie.id, rate, guestSessionId).catch(this.onError);
+    movieServices.sendRatedMovie(movie.id, rate, guestSessionId).catch(this.onError);
     this.setState(({ ratedMovies }) => {
       if (ratedMovies.find((ratedMovie) => ratedMovie.id === movie.id)) {
         return {
